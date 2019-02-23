@@ -1,0 +1,45 @@
+#reate an OSEv3 group that contains the masters and nodes groups
+[OSEv3:children]
+masters
+nodes
+etcd
+##
+## # Set variables common for all OSEv3 hosts
+[OSEv3:vars]
+###
+openshift_disable_check=disk_availability,docker_storage,memory_availability,docker_image_availability,package_version
+### # SSH user, this user should allow ssh based auth without requiring a password
+ansible_ssh_user=root
+###
+openshift_image_tag="v3.11.0"
+openshift_pkg_version="-3.11.0-1.el7.git.0.62803d0"
+openshift_version="3.11.0"
+openshift_release="3.11.0"
+openshift_master_default_subdomain=apps.paas.yylin.io
+osm_cluster_network_cidr=10.210.0.0/14
+openshift_portal_net=192.168.0.0/16
+openshift_dns_ip=192.168.0.1
+###
+### # If ansible_ssh_user is not root, ansible_become must be set to true
+#ansible_become=true
+###
+openshift_deployment_type=origin
+#deployment_subtype=registry
+openshift_hosted_infra_selector=""
+###
+### # uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
+#
+### # host group for masters
+[masters]
+instance-1
+#
+### # host group for etcd
+[etcd]
+instance-1
+#
+### # host group for nodes
+[nodes]
+instance-1 openshift_node_group_name='node-config-master'
+instance-2 openshift_node_group_name='node-config-infra'
+instance-3 openshift_node_group_name='node-config-compute'
